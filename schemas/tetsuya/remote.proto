@@ -14,7 +14,7 @@ service Config {
 }
 
 // ---- Messages ----
-message ListRequest {}                       // no fields
+message ListRequest {} // no fields
 message ListReply   { repeated string data = 1; }
 
 message RunRequest  {
@@ -22,7 +22,7 @@ message RunRequest  {
   bool   force = 2;
   bool   cache = 3;
 }
-message RunReply    { string out = 1; }
+message RunReply { string out = 1; }
 
 message TouchRequest {}
-message TouchReply   { string data = 1; }
+message TouchReply { string data = 1; }
