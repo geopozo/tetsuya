@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package tetsuya;
+
+// --- Service API ---
+service Service {
+  rpc List (ListRequest) returns (ListReply);
+  rpc Run  (RunRequest)  returns (RunReply);
+}
+
+// --- Config API ---
+service Config {
+  rpc Touch (TouchRequest) returns (TouchReply);
+}
+
+// ---- Messages ----
+message ListRequest {}                       // no fields
+message ListReply   { repeated string data = 1; }
+
+message RunRequest  {
+  string name = 1;
+  bool   force = 2;
+  bool   cache = 3;
+}
+message RunReply    { string out = 1; }
+
+message TouchRequest {}
+message TouchReply   { string data = 1; }
