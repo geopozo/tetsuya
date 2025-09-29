@@ -48,7 +48,12 @@ dev = [
   "typing-extensions>=4.12.2",
   "hypothesis>=6.113.0",
   "grpcio-tools>=1.75.1",
+  "types-protobuf>=6.32.1.20250918",
+  "types-grpcio>=1.0.0.20250914",
 ]
+
+[tool.ruff]
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["ALL"]
