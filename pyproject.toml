@@ -3,7 +3,7 @@ requires = ["setuptools>=65.0.0", "wheel", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages]
-find = {namespaces = true}
+find = { namespaces = true, where = ["src"] }
 
 [tool.setuptools-git-versioning]
 enabled = true
@@ -13,7 +13,7 @@ enabled = true
 [project]
 name = "tetsuya"
 description = "Plotly graph export library"
-license = { "file" = "LICENSE.md" }
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.12"
 dynamic = ["version"]
