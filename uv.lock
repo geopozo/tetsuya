@@ -450,6 +450,8 @@ dev = [
     { name = "pytest-asyncio" },
     { name = "pytest-order" },
     { name = "pytest-xdist" },
+    { name = "types-grpcio" },
+    { name = "types-protobuf" },
     { name = "typing-extensions" },
 ]
 
@@ -472,7 +474,27 @@ dev = [
     { name = "pytest-asyncio" },
     { name = "pytest-order", specifier = ">=1.3.0" },
     { name = "pytest-xdist" },
+    { name = "types-grpcio", specifier = ">=1.0.0.20250914" },
+    { name = "types-protobuf", specifier = ">=6.32.1.20250918" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
+]
+
+[[package]]
+name = "types-grpcio"
+version = "1.0.0.20250914"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b8/6f/7f105163dddfbf962097726e93a7bdb47b364ebb293a08a81de649c36b33/types_grpcio-1.0.0.20250914.tar.gz", hash = "sha256:6b6f42bfd90e8c73d3969e04978e8cb07651cf877f447779d4003a307d213016", size = 14532, upload-time = "2025-09-14T02:55:56.841Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9d/73/a24f7df9d053406395531da6425050fb0d1df87c6b41920e9cfd94fe7d60/types_grpcio-1.0.0.20250914-py3-none-any.whl", hash = "sha256:47253be85c5ef5ff5397c23a596cb6b657580cdd0814a7e3fc75d2aacb08aa60", size = 15270, upload-time = "2025-09-14T02:55:55.792Z" },
+]
+
+[[package]]
+name = "types-protobuf"
+version = "6.32.1.20250918"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/69/5a/bd06c2dbb77ebd4ea764473c9c4c014c7ba94432192cb965a274f8544b9d/types_protobuf-6.32.1.20250918.tar.gz", hash = "sha256:44ce0ae98475909ca72379946ab61a4435eec2a41090821e713c17e8faf5b88f", size = 63780, upload-time = "2025-09-18T02:50:39.391Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/37/5a/8d93d4f4af5dc3dd62aa4f020deae746b34b1d94fb5bee1f776c6b7e9d6c/types_protobuf-6.32.1.20250918-py3-none-any.whl", hash = "sha256:22ba6133d142d11cc34d3788ad6dead2732368ebb0406eaa7790ea6ae46c8d0b", size = 77885, upload-time = "2025-09-18T02:50:38.028Z" },
 ]
 
 [[package]]
