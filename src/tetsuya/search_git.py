@@ -66,26 +66,3 @@ class SearchGit:  # is Bannin
         print(retval)
         print(stderr)
         print("\n".join(_repos))
-
-
-# then, make a capn proto w/ socket
-# create a proper return object for publishing and store it
-# probably pickle object in cache
-# create short, long, structures for publishing that return object
-# it needs to be able to modify its config
-
-
-# create help blurb
-# create dependencies list "system"
-
-# create some kind of timing thing
-
-# add a statusbar hook
-
-# add a line-be-line processor?
-
-# Check for dirtiness or unpushed (based on this)
-# Check for updates to linux
-# Check for news
-# Check for linux news
-# Check for hackernews
