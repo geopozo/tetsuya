@@ -26,6 +26,10 @@ maintainers = [
 ]
 
 dependencies = [
+    "grpcio>=1.75.1",
+    "logistro>=1.1.0",
+    "platformdirs>=4.4.0",
+    "pycapnp>=2.2.0",
 ]
 
 [project.urls]
@@ -43,6 +47,7 @@ dev = [
   "pytest-order>=1.3.0",
   "typing-extensions>=4.12.2",
   "hypothesis>=6.113.0",
+  "grpcio-tools>=1.75.1",
 ]
 
 [tool.ruff.lint]
