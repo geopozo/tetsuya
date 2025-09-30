@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import logistro
 import platformdirs
 
-from ._server_globals import app
+from tetsuya.app._server_globals import app
 
 if TYPE_CHECKING:
     from fastapi import Request
@@ -18,6 +18,7 @@ config_file = (
     Path(platformdirs.user_config_dir("tetsuya", "pikulgroup")) / "config.toml"
 )
 
+# need a reload
 if config_file.is_file():
     with config_file.open("rb") as f:
         config_data = tomllib.load(f)

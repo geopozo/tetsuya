@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import typer
 
-from . import _server
+from .app import server
 
 cli = typer.Typer(help="tetsuya CLI")
 
 
 @cli.command(name="server")
-def server():
-    _server.start()
+def server_start():
+    server.start()
 
 
 @cli.command()

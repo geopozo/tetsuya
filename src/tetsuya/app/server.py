@@ -12,7 +12,7 @@ import platformdirs
 import uvicorn
 
 from ._server_globals import app
-from .search_git import SearchGit
+from . import services
 
 if TYPE_CHECKING:
     from ._protocol import Bannin
@@ -26,7 +26,7 @@ runtime = platformdirs.user_runtime_dir("tetsuya", "pikulgroup")
 
 # A list of possible services
 service_types: list[type[Bannin]] = [
-    SearchGit,
+    services.SearchGit,
 ]
 
 # A list of running services

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import logistro
 
-from ._config import config_data
+from .utils.config import config_data
 
 _logger = logistro.getLogger(__name__)
 
