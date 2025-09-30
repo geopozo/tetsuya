@@ -19,3 +19,6 @@ app = FastAPI(title="Tetsuya")
 
 # A list of possible services
 service_types: list[type[Bannin]] = []
+
+# A list of running services, only activated by start
+active_services: dict[str, Bannin] = {}
