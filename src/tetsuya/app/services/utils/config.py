@@ -22,13 +22,22 @@ config_file = (
     Path(platformdirs.user_config_dir("tetsuya", "pikulgroup")) / "config.toml"
 )
 
-# need a reload
-if config_file.is_file():
-    with config_file.open("rb") as f:
-        config_data = tomllib.load(f)
-else:
-    _logger.info("No config file found.")
-    config_data = {}
+config_data = {}
+
+
+def _load_config() -> bool:
+    # need a reload
+    if config_file.is_file():
+        with config_file.open("rb") as f:
+            config_data.clear()
+            config_data.update(tomllib.load(f))
+        return True
+    else:
+        _logger.info("No config file found.")
+        return False
+
+
+_load_config()
 
 config_cli = typer.Typer(help="Commands for managing the config.")
 cli.add_typer(config_cli, name="config")
@@ -83,3 +92,31 @@ async def _touch(data: dict):
     ret = {"path": str(config_file.resolve()), "content": text}
     _logger.info(f"Touch sending back: {ret}")
     return ret
+
+
+@config_cli.command()
+def reload():
+    """Reload config file."""
+    client = get_client()
+    _logger.debug("Sending reload command.")
+    r = client.post(
+        "/config/reload",
+    )
+    # check return value
+    if r.status_code == HTTPStatus.OK:
+        print("OK")  # noqa: T201
+    else:
+        raise ValueError(f"{r.status_code}: {r.text}")
+
+
+@app.post("/config/reload")
+async def _reload():
+    """Reload config file."""
+    _logger.info("Reloading config file.")
+    res = _load_config()
+    if not res:
+        return JSONResponse(
+            content={},
+            status_code=404,
+        )
+    return None
