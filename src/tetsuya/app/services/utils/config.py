@@ -29,13 +29,15 @@ else:
     _logger.info("No config file found.")
     config_data = {}
 
-config = typer.Typer(help="Commands for managing the config.")
-cli.add_typer(config, name="config")
+config_cli = typer.Typer(help="Commands for managing the config.")
+cli.add_typer(config_cli, name="config")
 
 
-@config.command()
-def touch():
+@config_cli.command()
+def touch(*, default: bool = False, overwrite: bool = False):
     """Create config file if it doesn't exist."""
+    # do a put to /config/touch below that has a json with those
+    # two possible values, and prints the result as string
 
 
 @app.put("/config/touch")
@@ -45,4 +47,4 @@ async def _touch(request: Request):
     _data = await request.json()  # (should we get defaults)
     config_file.parent.mkdir(parents=True, exist_ok=True)
     config_file.touch()
-    return str(config_file.resolve())
+    return {"path": str(config_file.resolve())}
