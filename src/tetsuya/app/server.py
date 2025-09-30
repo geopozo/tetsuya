@@ -30,7 +30,7 @@ service_types: list[type[Bannin]] = [
 ]
 
 # A list of running services
-services: list[Bannin] = []
+active_services: list[Bannin] = []
 
 
 def uds_path() -> Path:
@@ -65,7 +65,7 @@ def is_server_alive() -> bool:
 
 
 def start():
-    services.extend([f() for f in service_types])
+    active_services.extend([f() for f in service_types])
     if not is_server_alive():
         os.umask(0o077)
         uvicorn.run(app, uds=uds_path())

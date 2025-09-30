@@ -1,10 +1,14 @@
+from datetime import timedelta
 from typing import Protocol
 
 
 class Bannin(Protocol):
     name: str
-    time: int
+    cachelife: timedelta
     version: int
 
-    def load_config(self) -> None: ...
     def do(self) -> None: ...
+
+    # add run
+    # add dataclass?
+    # add expression

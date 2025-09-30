@@ -1,6 +1,9 @@
 """Exposes a SearchGit service to find git repos below your home."""
 
+import asyncio
 import subprocess
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import logistro
@@ -10,33 +13,68 @@ from .utils.config import config_data
 _logger = logistro.getLogger(__name__)
 
 
+# Should be a protocol
+@dataclass()
+class SearchGitStorage:
+    retval: int
+    stderr: str
+    repos: list[Path]
+    created_at: datetime = field(
+        default_factory=lambda: datetime.now(tz=timezone.UTC),
+    )
+
+    def long(self) -> str:
+        """One full path per line."""
+        return "\n".join(str(p.resolve()) for p in sorted(self.repos))
+
+    def short(self) -> str:
+        """Comma-separated last directory names."""
+        return ", ".join(p.name for p in sorted(self.repos))
+
+
 class SearchGit:  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
     name: str
-    time: int
+    cachelife: timedelta
     version: int
-    config: dict  # not typed at the moment
+    last: SearchGitStorage | None
 
     def __init__(self):
         """Construct a SearchGit service."""
         self.name = "SearchGit"
-        self.time = 60 * 60 * 12
+        self.cachelife = timedelta(hours=12)
         self.version = 0
-        self.load_config()
+        self.last = None
         # check if reloading (cache)
 
-    # should verify config
-    def load_config(self):  # needs to be type
-        """Load config."""
-        self.config = config_data.get(self.name, {})
+    def _is_expired(self):
+        return not (
+            self.last
+            and (self.last.created_at + self.cachelife < datetime.now(tz=datetime.UTC))
+        )
 
-    def do(self):
+    def short(self):
+        return self.last.short()
+
+    def long(self):
+        return self.last.long()
+
+    def object(self):
+        return self.last
+
+    async def run(self, *, force=False):
+        if not force and not self._is_exired():
+            return
+        self.last = await asyncio.to_thread(self.execute)
+
+    def execute(self) -> SearchGitStorage:
         """Execute search of your home repository for git repos."""
         home = Path.home()
 
-        ignore_folders = self.config.get("ignore_folders", [])
-        ignore_paths = self.config.get("ignore_paths", [])
+        _c = config_data.get(self.name, {})
+        ignore_folders = _c.get("ignore_folders", [])
+        ignore_paths = _c.get("ignore_paths", [])
 
         # Build the prune expression:
         # ( -path <abs> -o -path <abs> -o -name <nm> -o ... )
@@ -70,7 +108,8 @@ class SearchGit:  # is Bannin
         )
         retval, stdout, stderr = p.returncode, p.stdout, p.stderr
 
-        _repos = sorted({p for p in stdout.decode(errors="ignore").split("\n") if p})
-        print(retval)  # noqa: T201
-        print(stderr)  # noqa: T201
-        print("\n".join(_repos))  # noqa: T201
+        _repos = sorted(
+            {Path(p) for p in stdout.decode(errors="ignore").split("\n") if p},
+        )
+
+        return SearchGitStorage(retval=retval, stderr=stderr.decode(), repos=_repos)
