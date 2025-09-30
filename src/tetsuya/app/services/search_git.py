@@ -16,7 +16,7 @@ _logger = logistro.getLogger(__name__)
 
 # These will have to be versioned
 # And they will have to have migratory functions
-# They should also be logged
+# They should also be logged (independently of other logs)
 # And their constructors should reasonably take an old version
 # config validation/default maybe dataclass or typed dict
 

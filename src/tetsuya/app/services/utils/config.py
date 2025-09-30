@@ -43,6 +43,10 @@ config_cli = typer.Typer(help="Commands for managing the config.")
 cli.add_typer(config_cli, name="config")
 
 
+# should be able to load up *specific* log items and not replace others
+# should confirm on force
+
+
 # this should maybe have print? overwrite doesn't really make sense
 @config_cli.command()
 def touch(*, default: bool = False, force: bool = False, dump: bool = False):
