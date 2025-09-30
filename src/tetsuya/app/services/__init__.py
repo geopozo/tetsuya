@@ -2,6 +2,7 @@
 
 from tetsuya._globals import cli
 
+from . import utils as utils
 from .search_git import SearchGit
 
 __all__ = ["SearchGit"]

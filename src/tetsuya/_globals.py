@@ -1,4 +1,4 @@
-"""These globals, needed everywhere, cannot depend on anything."""
+"""These globals, needed everywhere, cannot depend on any tetsuya thing."""
 
 from __future__ import annotations
 
@@ -11,9 +11,3 @@ _logger = logistro.getLogger(__name__)
 cli = typer.Typer(help="tetsuya CLI")
 # Our server daemon
 app = FastAPI(title="Tetsuya")
-
-
-def main():  # script entry point
-    """Start the cli service."""
-    _, remaining = logistro.parser.parse_known_args()
-    cli(args=remaining)

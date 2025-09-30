@@ -37,7 +37,7 @@ dependencies = [
 [project.urls]
 
 [project.scripts]
-tetsuya = "tetsuya._globals:main"
+tetsuya = "tetsuya.app:main"
 
 [dependency-groups]
 dev = [
