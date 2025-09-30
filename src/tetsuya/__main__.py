@@ -1,4 +1,6 @@
-from tetsuya import register
+from tetsuya.cli import register
 
-for watcher in register:
-    watcher.do()
+# called with -m tetsuyah, sort of a weird way to access cli
+if __name__ == "__main__":
+    for watcher in tuple(f() for f in register()):
+        watcher.do()

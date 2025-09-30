@@ -1,21 +1,34 @@
+from __future__ import annotations
+
 import tomllib
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import logistro
 import platformdirs
 
+from ._server import app
+
+if TYPE_CHECKING:
+    from fastapi import Request
+
 _logger = logistro.getLogger(__name__)
 
-config_dir = Path(platformdirs.user_config_dir("tetsuya", "pikulgroup"))
+config_file = (
+    Path(platformdirs.user_config_dir("tetsuya", "pikulgroup")) / "config.toml"
+)
 
-if config_dir.is_file():
-    with config_dir.open("rb") as f:
+if config_file.is_file():
+    with config_file.open("rb") as f:
         config_data = tomllib.load(f)
 else:
     _logger.info("No config file found.")
     config_data = {}
 
 
-def touch():
-    config_dir.touch()
-    return str(config_dir.resolve())
+@app.put("/config/touch")
+async def touch(request: Request):
+    data = await request.json()  # (should we get defaults)
+    config_file.parent.mkdir(parents=True, exist_ok=True)
+    config_file.touch()
+    return str(config_file.resolve())

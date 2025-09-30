@@ -26,13 +26,18 @@ maintainers = [
 ]
 
 dependencies = [
+    "fastapi>=0.118.0",
+    "httpx>=0.28.1",
     "logistro>=1.1.0",
     "platformdirs>=4.4.0",
+    "typer>=0.19.2",
+    "uvicorn>=0.37.0",
 ]
 
 [project.urls]
 
 [project.scripts]
+tetsuya = "tetsuya.cli:main"
 
 [dependency-groups]
 dev = [
