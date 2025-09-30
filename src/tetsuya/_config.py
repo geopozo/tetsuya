@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 import logistro
 import platformdirs
 
-from ._server import app
+from ._server_globals import app
 
 if TYPE_CHECKING:
     from fastapi import Request
