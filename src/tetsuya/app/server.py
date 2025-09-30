@@ -39,6 +39,7 @@ def is_server_alive(uds_path: Path) -> bool:
     """Check if server is running."""
     if not uds_path.exists():
         return False
+    client: None | httpx.Client = None
     try:
         client = get_client(uds_path, defer_close=False)
         r = client.get("/ping")
@@ -56,7 +57,8 @@ def is_server_alive(uds_path: Path) -> bool:
         uds_path.unlink()
         return False
     finally:
-        client.close()
+        if client:
+            client.close()
 
 
 @cli.command(name="server")
