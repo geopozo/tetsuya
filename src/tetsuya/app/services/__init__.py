@@ -15,7 +15,7 @@ __all__ = ["SearchGit"]
 
 _logger = logistro.getLogger(__name__)
 
-service_cli = typer.Typer(help="Commands for managing the services.")
+service_cli = typer.Typer(help="Manage the services.")
 cli.add_typer(service_cli, name="service")
 
 

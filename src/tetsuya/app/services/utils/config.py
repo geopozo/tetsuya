@@ -39,7 +39,7 @@ def _load_config() -> bool:
 
 _load_config()
 
-config_cli = typer.Typer(help="Commands for managing the config.")
+config_cli = typer.Typer(help="Manage the config.")
 cli.add_typer(config_cli, name="config")
 
 
