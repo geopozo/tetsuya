@@ -11,6 +11,7 @@ import platformdirs
 import typer
 
 from tetsuya._globals import app, cli
+from tetsuya.app.client import get_client
 
 if TYPE_CHECKING:
     from fastapi import Request
@@ -36,8 +37,13 @@ cli.add_typer(config_cli, name="config")
 @config_cli.command()
 def touch(*, default: bool = False, overwrite: bool = False):
     """Create config file if it doesn't exist."""
-    # do a put to /config/touch below that has a json with those
-    # two possible values, and prints the result as string
+    client = get_client()
+    response = client.put(
+        "/config/touch",
+        json={"default": default, "overwrite": overwrite},
+    )
+    result = response.json()
+    print(result.get("path", "Some error occurred"))  # noqa: T201
 
 
 @app.put("/config/touch")
