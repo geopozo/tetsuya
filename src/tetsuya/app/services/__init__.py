@@ -36,6 +36,6 @@ def _list():
 
 
 @app.post("/service/list")
-async def _reload():
-    """Reload config file."""
+async def _list():
+    """List running services, or all services with --all."""
     return list(active_services.keys())
