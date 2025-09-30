@@ -1,3 +1,5 @@
+"""Bottom dependency."""
+
 import asyncio
 from datetime import UTC, datetime, timedelta
 from typing import Protocol
@@ -24,6 +26,8 @@ class Bannin(Protocol):
     version: int
     cache: Output | None
 
+    @classmethod
+    def default_config(cls) -> dict: ...
     def _execute(self) -> Output: ...
 
     def _is_expired(self):

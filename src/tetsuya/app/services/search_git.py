@@ -7,6 +7,8 @@ from pathlib import Path
 
 import logistro
 
+from tetsuya._globals import service_types
+
 from . import _protocol
 from .utils.config import config_data
 
@@ -16,6 +18,7 @@ _logger = logistro.getLogger(__name__)
 # And they will have to have migratory functions
 # They should also be logged
 # And their constructors should reasonably take an old version
+# config validation/default maybe dataclass or typed dict
 
 
 @dataclass()
@@ -41,9 +44,17 @@ class SearchGitStorage:
 class SearchGit(_protocol.Bannin):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
+    @classmethod  # make mandatory through protocol
+    def default_config(cls) -> dict:
+        """Return dictionary with default config."""
+        return {
+            "ignore_folders": [".cache"],
+            "ignore_paths": [],
+        }
+
     def __init__(self):
         """Construct a SearchGit service."""
-        self.name = "SearchGit"
+        self.name = self.__class__.__name__
         self.cachelife = timedelta(hours=12)
         self.version = 0
         self.cache = None
@@ -54,8 +65,10 @@ class SearchGit(_protocol.Bannin):  # is Bannin
         home = Path.home()
 
         _c = config_data.get(self.name, {})
+
         ignore_folders = _c.get("ignore_folders", [])
         _logger.info(f"Ignoring folders: {ignore_folders}")
+
         ignore_paths = _c.get("ignore_paths", [])
         _logger.info(f"Ignoring paths: {ignore_paths}")
 
@@ -96,3 +109,6 @@ class SearchGit(_protocol.Bannin):  # is Bannin
         )
 
         return SearchGitStorage(retval=retval, stderr=stderr.decode(), repos=_repos)
+
+
+service_types.append(SearchGit)

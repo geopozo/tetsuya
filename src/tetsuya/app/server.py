@@ -11,9 +11,8 @@ import httpx
 import logistro
 import uvicorn
 
-from tetsuya._globals import app, cli
+from tetsuya._globals import app, cli, service_types
 
-from . import services
 from .client import get_client
 from .utils import uds_path
 
@@ -25,14 +24,8 @@ if TYPE_CHECKING:
 
 _logger = logistro.getLogger(__name__)
 
-
-# A list of possible services
-service_types: list[type[Bannin]] = [
-    services.SearchGit,
-]
-
 # A list of running services, only activated by start
-active_services: list[Bannin] = []
+active_services: dict[str, Bannin] = {}
 
 
 def is_server_alive(uds_path: Path) -> bool:
@@ -64,7 +57,9 @@ def is_server_alive(uds_path: Path) -> bool:
 @cli.command(name="server")
 def start():
     """Start the server."""
-    active_services.extend([f() for f in service_types])
+    active_services.update(
+        {f.__name__: f() for f in service_types},
+    )
     if not is_server_alive(p := uds_path()):
         for _s in active_services:
             _logger.info(f"Found: {_s.__class__.__name__}")
