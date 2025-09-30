@@ -57,14 +57,16 @@ def is_server_alive(uds_path: Path) -> bool:
         ) as client:
             r = client.get("/ping")
             if r.status_code == HTTPStatus.OK:
-                _logger.info("Socket ping returned OK.")
+                _logger.info("Socket ping returned OK- server alive.")
                 return True
             else:
-                _logger.info(f"Socket ping returned {r.status_code}.")
+                _logger.info(
+                    f"Socket ping returned {r.status_code}, removing socket.",
+                )
                 uds_path.unlink()
                 return False
     except httpx.TransportError:
-        _logger.info("Transport error in socket.")
+        _logger.info("Transport error in socket, removing socket.")
         uds_path.unlink()
         return False
 
@@ -73,7 +75,10 @@ def start():
     """Start the server."""
     active_services.extend([f() for f in service_types])
     if not is_server_alive(p := uds_path()):
+        for _s in active_services:
+            _logger.info(f"Found: {_s.__class__.__name__}")
         os.umask(0o077)
+        _logger.info("Starting server.")
         uvicorn.run(app, uds=p)
     else:
         print("Server already running.", file=sys.stderr)  # noqa: T201
@@ -83,4 +88,5 @@ def start():
 @app.get("/ping")
 def ping():
     """Ping!"""  #  noqa: D400
+    _logger.info("Pong!")
     return "pong"

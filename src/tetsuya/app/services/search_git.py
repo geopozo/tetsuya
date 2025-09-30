@@ -70,6 +70,7 @@ class SearchGit:  # is Bannin
     async def run(self, *, force=False):
         """Run the service in a cache-aware manner."""
         if not force and not self._is_expired():
+            _logger.info("Not rerunning- cache is alive.")
             return
         self.last = await asyncio.to_thread(self.execute)
 
@@ -79,7 +80,9 @@ class SearchGit:  # is Bannin
 
         _c = config_data.get(self.name, {})
         ignore_folders = _c.get("ignore_folders", [])
+        _logger.info(f"Ignoring folders: {ignore_folders}")
         ignore_paths = _c.get("ignore_paths", [])
+        _logger.info(f"Ignoring paths: {ignore_paths}")
 
         # Build the prune expression:
         # ( -path <abs> -o -path <abs> -o -name <nm> -o ... )
@@ -105,7 +108,7 @@ class SearchGit:  # is Bannin
             "%h\n",  # print the parent dir of .git
             "-prune",  # and don't descend into the .git dir itself
         ]
-
+        _logger.info(" ".join(cmd))
         p = subprocess.run(  # noqa: S603
             cmd,
             check=False,

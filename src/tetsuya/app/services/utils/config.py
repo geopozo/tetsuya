@@ -32,6 +32,7 @@ else:
 @app.put("/config/touch")
 async def touch(request: Request):
     """Create the config file if it doesn't exist."""
+    _logger.info("Touching config file.")
     _data = await request.json()  # (should we get defaults)
     config_file.parent.mkdir(parents=True, exist_ok=True)
     config_file.touch()
