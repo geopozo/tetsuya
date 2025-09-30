@@ -2,7 +2,7 @@
 
 import logistro
 
-from tetsuya.globals import cli
+from tetsuya._globals import cli
 
 from . import server as server  # need this to be executed
 from . import services as services  # need this to be executed
