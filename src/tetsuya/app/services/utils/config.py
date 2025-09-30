@@ -31,8 +31,9 @@ config_cli = typer.Typer(help="Commands for managing the config.")
 cli.add_typer(config_cli, name="config")
 
 
+# this should maybe have print? overwrite doesn't really make sense
 @config_cli.command()
-def touch(*, default: bool = False, overwrite: bool = False):
+def touch(*, default: bool = False, overwrite: bool = False, dump: bool = False):
     """Create config file if it doesn't exist."""
     client = get_client()
     _logger.debug("Sending touch command.")
@@ -44,7 +45,10 @@ def touch(*, default: bool = False, overwrite: bool = False):
     # check return value
     if r.status_code == HTTPStatus.OK:
         result = r.json()
-        print(result.get("path", f"Weird result: {result}"))  # noqa: T201
+        if not dump:
+            print(result.get("path", f"Weird result: {result}"))  # noqa: T201
+        else:
+            print(result.get("content", f"Weird result: {result}"))  # noqa: T201
     else:
         raise ValueError(f"{r.status_code}: {r.text}")
 
@@ -56,6 +60,7 @@ async def _touch(data: dict):
     _logger.info(f"Touch received data: {data}")
     config_file.parent.mkdir(parents=True, exist_ok=True)
     config_file.touch()
-    ret = {"path": str(config_file.resolve())}
+    text = config_file.read_text(encoding="utf-8")
+    ret = {"path": str(config_file.resolve()), "content": text}
     _logger.info(f"Touch sending back: {ret}")
     return ret
