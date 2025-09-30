@@ -1,5 +1,9 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Protocol
+
+
+class Output(Protocol):
+    created_at: datetime
 
 
 class Bannin(Protocol):
@@ -7,7 +11,7 @@ class Bannin(Protocol):
     cachelife: timedelta
     version: int
 
-    def do(self) -> None: ...
+    def execute(self) -> Output: ...
 
     # add run
     # add dataclass?

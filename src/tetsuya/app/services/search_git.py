@@ -3,7 +3,7 @@
 import asyncio
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import logistro
@@ -20,7 +20,7 @@ class SearchGitStorage:
     stderr: str
     repos: list[Path]
     created_at: datetime = field(
-        default_factory=lambda: datetime.now(tz=timezone.UTC),
+        default_factory=lambda: datetime.now(tz=UTC),
     )
 
     def long(self) -> str:
@@ -50,21 +50,20 @@ class SearchGit:  # is Bannin
 
     def _is_expired(self):
         return not (
-            self.last
-            and (self.last.created_at + self.cachelife < datetime.now(tz=datetime.UTC))
+            self.last and (self.last.created_at + self.cachelife < datetime.now(tz=UTC))
         )
 
     def short(self):
-        return self.last.short()
+        return self.last.short() if self.last else "No data"
 
     def long(self):
-        return self.last.long()
+        return self.last.long() if self.last else "No data"
 
     def object(self):
         return self.last
 
     async def run(self, *, force=False):
-        if not force and not self._is_exired():
+        if not force and not self._is_expired():
             return
         self.last = await asyncio.to_thread(self.execute)
 

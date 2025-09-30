@@ -15,7 +15,7 @@ from ._server_globals import app
 from . import services
 
 if TYPE_CHECKING:
-    from ._protocol import Bannin
+    from .services._protocol import Bannin
 
 _logger = logistro.getLogger(__name__)
 _logger.setLevel("INFO")
@@ -68,7 +68,7 @@ def start():
     active_services.extend([f() for f in service_types])
     if not is_server_alive():
         os.umask(0o077)
-        uvicorn.run(app, uds=uds_path())
+        uvicorn.run(app, uds=str(uds_path()))
     else:
         print("Server already running.", file=sys.stderr)  # noqa: T201
         sys.exit(1)
