@@ -5,7 +5,6 @@ import logistro
 from tetsuya._globals import cli
 
 from . import server as server  # need this to be executed
-from . import services as services  # need this to be executed
 
 _logger = logistro.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-"""Contains helper functions for the client. Can only depend on server."""
+"""Contains helper functions for the client. Only utils dep."""
 
 import atexit
 from pathlib import Path

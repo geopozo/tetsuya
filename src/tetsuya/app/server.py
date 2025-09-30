@@ -31,7 +31,7 @@ service_types: list[type[Bannin]] = [
     services.SearchGit,
 ]
 
-# A list of running services
+# A list of running services, only activated by start
 active_services: list[Bannin] = []
 
 
