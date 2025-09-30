@@ -9,10 +9,10 @@ from .search_git import SearchGit
 if TYPE_CHECKING:
     from ._protocol import Bannin
 
-register: list[Bannin] = [
-    SearchGit(),
-]
-
 __all__ = [
     "register",
+]
+
+register: list[Bannin] = [
+    SearchGit(),
 ]
