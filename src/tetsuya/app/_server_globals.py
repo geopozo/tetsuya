@@ -1,3 +1,5 @@
+"""_server_globals will be needed by everything."""
+
 from fastapi import FastAPI
 
 # Our server daemon

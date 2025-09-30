@@ -1,19 +1,24 @@
+"""Main entry point for CLI functions."""
+
 from __future__ import annotations
 
+import logistro
 import typer
 
 from .app import server
+
+_logger = logistro.getLogger(__name__)
 
 cli = typer.Typer(help="tetsuya CLI")
 
 
 @cli.command(name="server")
-def server_start():
+def _server_start():
     server.start()
 
 
-@cli.command()
-def service(name: str):
+@cli.command(name="service")
+def _service(name: str):
     # from here, we make a client call to the server
     # are capacity to do that is in _server
     # its a matching endpoint
@@ -21,4 +26,6 @@ def service(name: str):
 
 
 def main():
-    cli()
+    """Start the cli service."""
+    _, remaining = logistro.parser.parse_known_args()
+    cli(args=remaining)

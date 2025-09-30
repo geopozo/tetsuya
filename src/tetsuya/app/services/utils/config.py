@@ -1,3 +1,5 @@
+"""Tools for managing the global config."""
+
 from __future__ import annotations
 
 import tomllib
@@ -29,7 +31,8 @@ else:
 
 @app.put("/config/touch")
 async def touch(request: Request):
-    data = await request.json()  # (should we get defaults)
+    """Create the config file if it doesn't exist."""
+    _data = await request.json()  # (should we get defaults)
     config_file.parent.mkdir(parents=True, exist_ok=True)
     config_file.touch()
     return str(config_file.resolve())

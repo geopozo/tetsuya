@@ -1,3 +1,5 @@
+"""Server implements logic for starting and verifying server."""
+
 from __future__ import annotations
 
 import os
@@ -11,14 +13,14 @@ import logistro
 import platformdirs
 import uvicorn
 
-from ._server_globals import app
 from . import services
+from ._server_globals import app
 
 if TYPE_CHECKING:
     from .services._protocol import Bannin
 
+
 _logger = logistro.getLogger(__name__)
-_logger.setLevel("INFO")
 
 # The folder where we'll create a socket
 runtime = platformdirs.user_runtime_dir("tetsuya", "pikulgroup")
@@ -34,17 +36,20 @@ active_services: list[Bannin] = []
 
 
 def uds_path() -> Path:
+    """Return default socket path."""
     base = Path(runtime)
     p = base / "tetsuya.sock"
     p.parent.mkdir(parents=True, exist_ok=True)
+    _logger.info(f"Socket path: {p!s}")
     return p
 
 
-def is_server_alive() -> bool:
-    if not (p := uds_path()).exists():
+def is_server_alive(uds_path: Path) -> bool:
+    """Check if server is running."""
+    if not uds_path.exists():
         return False
     try:
-        transport = httpx.HTTPTransport(uds=str(p))
+        transport = httpx.HTTPTransport(uds=str(uds_path))
         with httpx.Client(
             timeout=httpx.Timeout(0.05),
             transport=transport,
@@ -56,19 +61,20 @@ def is_server_alive() -> bool:
                 return True
             else:
                 _logger.info(f"Socket ping returned {r.status_code}.")
-                uds_path().unlink()
+                uds_path.unlink()
                 return False
     except httpx.TransportError:
         _logger.info("Transport error in socket.")
-        uds_path().unlink()
+        uds_path.unlink()
         return False
 
 
 def start():
+    """Start the server."""
     active_services.extend([f() for f in service_types])
-    if not is_server_alive():
+    if not is_server_alive(p := uds_path()):
         os.umask(0o077)
-        uvicorn.run(app, uds=str(uds_path()))
+        uvicorn.run(app, uds=p)
     else:
         print("Server already running.", file=sys.stderr)  # noqa: T201
         sys.exit(1)
@@ -76,4 +82,5 @@ def start():
 
 @app.get("/ping")
 def ping():
-    return {}
+    """Ping!"""  #  noqa: D400
+    return "pong"

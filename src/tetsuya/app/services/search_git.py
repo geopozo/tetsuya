@@ -16,6 +16,8 @@ _logger = logistro.getLogger(__name__)
 # Should be a protocol
 @dataclass()
 class SearchGitStorage:
+    """Service to search operating system for git repos."""
+
     retval: int
     stderr: str
     repos: list[Path]
@@ -54,15 +56,19 @@ class SearchGit:  # is Bannin
         )
 
     def short(self):
+        """Print a short description of latest result."""
         return self.last.short() if self.last else "No data"
 
     def long(self):
+        """Print a long description of latest result."""
         return self.last.long() if self.last else "No data"
 
     def object(self):
+        """Get the actual latest result object."""
         return self.last
 
     async def run(self, *, force=False):
+        """Run the service in a cache-aware manner."""
         if not force and not self._is_expired():
             return
         self.last = await asyncio.to_thread(self.execute)
