@@ -1,6 +1,5 @@
 """Exposes a SearchGit service to find git repos below your home."""
 
-import asyncio
 import subprocess
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
@@ -8,12 +7,17 @@ from pathlib import Path
 
 import logistro
 
+from . import _protocol
 from .utils.config import config_data
 
 _logger = logistro.getLogger(__name__)
 
+# These will have to be versioned
+# And they will have to have migratory functions
+# They should also be logged
+# And their constructors should reasonably take an old version
 
-# Should be a protocol
+
 @dataclass()
 class SearchGitStorage:
     """Service to search operating system for git repos."""
@@ -34,47 +38,18 @@ class SearchGitStorage:
         return ", ".join(p.name for p in sorted(self.repos))
 
 
-class SearchGit:  # is Bannin
+class SearchGit(_protocol.Bannin):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
-
-    name: str
-    cachelife: timedelta
-    version: int
-    last: SearchGitStorage | None
 
     def __init__(self):
         """Construct a SearchGit service."""
         self.name = "SearchGit"
         self.cachelife = timedelta(hours=12)
         self.version = 0
-        self.last = None
+        self.cache = None
         # check if reloading (cache)
 
-    def _is_expired(self):
-        return not (
-            self.last and (self.last.created_at + self.cachelife < datetime.now(tz=UTC))
-        )
-
-    def short(self):
-        """Print a short description of latest result."""
-        return self.last.short() if self.last else "No data"
-
-    def long(self):
-        """Print a long description of latest result."""
-        return self.last.long() if self.last else "No data"
-
-    def object(self):
-        """Get the actual latest result object."""
-        return self.last
-
-    async def run(self, *, force=False):
-        """Run the service in a cache-aware manner."""
-        if not force and not self._is_expired():
-            _logger.info("Not rerunning- cache is alive.")
-            return
-        self.last = await asyncio.to_thread(self.execute)
-
-    def execute(self) -> SearchGitStorage:
+    def _execute(self) -> SearchGitStorage:
         """Execute search of your home repository for git repos."""
         home = Path.home()
 
