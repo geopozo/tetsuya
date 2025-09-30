@@ -36,6 +36,6 @@ def _list():
 
 
 @app.post("/service/list")
-async def _list():
+async def __list():
     """List running services, or all services with --all."""
     return list(active_services.keys())

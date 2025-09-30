@@ -21,6 +21,7 @@ class Output(Protocol):
 class Bannin(Protocol):
     """The abstract idea of a service."""
 
+    report_type: type[Output]
     name: str
     cachelife: timedelta
     version: int

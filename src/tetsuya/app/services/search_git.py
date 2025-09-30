@@ -19,11 +19,12 @@ _logger = logistro.getLogger(__name__)
 # They should also be logged (independently of other logs)
 # And their constructors should reasonably take an old version
 # config validation/default maybe dataclass or typed dict
+# Also should be able to consume javascript and return report
 
 
 @dataclass()
-class SearchGitStorage:
-    """Service to search operating system for git repos."""
+class SearchGitReport:
+    """Report format for SearchGit."""
 
     retval: int
     stderr: str
@@ -44,6 +45,8 @@ class SearchGitStorage:
 class SearchGit(_protocol.Bannin):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
+    report_type: type[_protocol.Output] = SearchGitReport
+
     @classmethod  # make mandatory through protocol
     def default_config(cls) -> dict:
         """Return dictionary with default config."""
@@ -60,7 +63,7 @@ class SearchGit(_protocol.Bannin):  # is Bannin
         self.cache = None
         # check if reloading (cache)
 
-    def _execute(self) -> SearchGitStorage:
+    def _execute(self) -> SearchGitReport:
         """Execute search of your home repository for git repos."""
         home = Path.home()
 
@@ -108,7 +111,7 @@ class SearchGit(_protocol.Bannin):  # is Bannin
             {Path(p) for p in stdout.decode(errors="ignore").split("\n") if p},
         )
 
-        return SearchGitStorage(retval=retval, stderr=stderr.decode(), repos=_repos)
+        return SearchGitReport(retval=retval, stderr=stderr.decode(), repos=_repos)
 
 
 service_types.append(SearchGit)
