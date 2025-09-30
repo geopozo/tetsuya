@@ -13,8 +13,9 @@ import logistro
 import platformdirs
 import uvicorn
 
+from tetsuya._globals import app, cli
+
 from . import services
-from ._server_globals import app
 
 if TYPE_CHECKING:
     from .services._protocol import Bannin
@@ -71,6 +72,7 @@ def is_server_alive(uds_path: Path) -> bool:
         return False
 
 
+@cli.command(name="server")
 def start():
     """Start the server."""
     active_services.extend([f() for f in service_types])
@@ -79,7 +81,7 @@ def start():
             _logger.info(f"Found: {_s.__class__.__name__}")
         os.umask(0o077)
         _logger.info("Starting server.")
-        uvicorn.run(app, uds=p)
+        uvicorn.run(app, uds=str(p))
     else:
         print("Server already running.", file=sys.stderr)  # noqa: T201
         sys.exit(1)

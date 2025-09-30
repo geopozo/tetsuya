@@ -8,8 +8,9 @@ from typing import TYPE_CHECKING
 
 import logistro
 import platformdirs
+import typer
 
-from tetsuya.app._server_globals import app
+from tetsuya._globals import app, cli
 
 if TYPE_CHECKING:
     from fastapi import Request
@@ -28,9 +29,17 @@ else:
     _logger.info("No config file found.")
     config_data = {}
 
+config = typer.Typer(help="Commands for managing the config.")
+cli.add_typer(config, name="config")
+
+
+@config.command()
+def touch():
+    """Create config file if it doesn't exist."""
+
 
 @app.put("/config/touch")
-async def touch(request: Request):
+async def _touch(request: Request):
     """Create the config file if it doesn't exist."""
     _logger.info("Touching config file.")
     _data = await request.json()  # (should we get defaults)
