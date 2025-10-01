@@ -10,6 +10,10 @@ import logistro
 
 _logger = logistro.getLogger(__name__)
 
+# I'm not entirely sure about the timer
+# And it doesn't actually cache and load
+# And there is no way to change it.
+
 
 class Output(Protocol):
     """The object a service stores or returns."""
