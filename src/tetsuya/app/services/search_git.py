@@ -110,7 +110,7 @@ class SearchGit(_protocol.Bannin):  # is Bannin
         _repos = sorted(
             {Path(p) for p in stdout.decode(errors="ignore").split("\n") if p},
         )
-        _logger.info(_repos)
+
         return SearchGitReport(retval=retval, stderr=stderr.decode(), repos=_repos)
 
 

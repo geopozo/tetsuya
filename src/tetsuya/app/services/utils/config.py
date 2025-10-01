@@ -102,7 +102,7 @@ async def _touch(data: dict):
 def reload():
     """Reload config file."""
     client = get_client()
-    _logger.debug("Sending reload command.")
+    _logger.info("Sending reload command.")
     r = client.post(
         "/config/reload",
     )

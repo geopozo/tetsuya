@@ -31,9 +31,9 @@ class Bannin(Protocol):
     def default_config(cls) -> dict: ...
     def _execute(self) -> Output: ...
 
-    def _is_live(self):
+    def _is_cache_live(self):
         return self.cache is not None and (
-            self.cache.created_at + self.cachelife < datetime.now(tz=UTC)
+            self.cache.created_at + self.cachelife > datetime.now(tz=UTC)
         )
 
     def get_object(self):
@@ -42,8 +42,8 @@ class Bannin(Protocol):
 
     async def run(self, *, force=False):
         """Run the service in a cache-aware manner."""
-        if not force and self._is_live():
-            _logger.info("Not rerunning- cache is alive.")
+        if not force and self._is_cache_live():
+            _logger.info("Not rerunning- cache is live.")
             return
         self.cache = await asyncio.to_thread(self._execute)
-        _logger.info(f"New cache: {self.cache}")
+        _logger.debug2(f"New cache: {self.cache}")

@@ -29,7 +29,7 @@ cli.add_typer(service_cli, name="service")
 def _list():
     """List running services, or all services with --all."""
     client = get_client()
-    _logger.debug("Sending reload command.")
+    _logger.run("Sending list command.")
     r = client.post(
         "/service/list",
     )
@@ -58,7 +58,7 @@ def run(
 ):
     """Run a or all services."""
     client = get_client(timeout=10)
-    _logger.debug("Sending reload command.")
+    _logger.info("Sending run command.")
     r = client.post(
         "/service/run",
         json={
@@ -129,5 +129,5 @@ async def _run(data: dict):
                 results[k] = asdict(_r)
             case _:
                 _logger.error(f"Unknown format: {data.get('format')}")
-    _logger.info(f"Returning results: {results}")
+    _logger.debug2(f"Returning results: {results}")
     return results
