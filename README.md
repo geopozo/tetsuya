@@ -1,12 +1,14 @@
-TODO:
+Later todo
 
-- Extract cache out to be inherited
-- Create defaults with touch (type this stuff?)
-- Command to run a service (with force?) / print type
-- Make an autorunner with register
-- Look at i3 blocks
-- Check for dirtiness or unpushed (based on this)
-- Check for updates to linux
-- Check for news
-- Check for linux news
-- Check for hackernews
+  - [ ] Make config typed
+
+  - [ ] Add checking if git dirty or not pushed
+  - [ ] Add some log statistics
+  - [ ] Add some firewall statistics
+  - [ ] Add updates
+  - [ ] Add changelog (linux)
+  - [ ] Add news, linux, hackernews?
+  - [ ] Add website status check
+  - [ ] Add google analytics check
+  - [ ] But also constant ingress and event push (tetsuya)
+  - [ ] Add something that checks on any request
