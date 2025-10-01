@@ -10,7 +10,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python_v: ['3.8', '3.9', '3.10', '']
+        python_v: ['']
     name: Build and Test
     runs-on: ubuntu-latest
     steps:
