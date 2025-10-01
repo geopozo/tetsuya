@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 from http import HTTPStatus
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import logistro
 import typer
@@ -16,6 +16,9 @@ from tetsuya.app.client import get_client
 
 from . import utils as utils
 from .search_git import SearchGit
+
+if TYPE_CHECKING:
+    from typing import Any
 
 __all__ = ["SearchGit"]
 
@@ -29,7 +32,7 @@ cli.add_typer(service_cli, name="service")
 def _list():
     """List running services, or all services with --all."""
     client = get_client()
-    _logger.run("Sending list command.")
+    _logger.info("Sending list command.")
     r = client.post(
         "/service/list",
     )
@@ -86,7 +89,7 @@ def run(
 
 
 @app.post("/service/run")
-async def _run(data: dict):
+async def _run(data: dict):  # noqa: C901, PLR0912
     """Run a or all services."""
     _n = data.get("name")
     _logger.info(f"Received service run request: {data}")
@@ -112,6 +115,8 @@ async def _run(data: dict):
         )
     services = {_n: active_services[_n]} if _n else active_services
     tasks = {}
+    k: Any
+    v: Any
     for k, v in services.items():
         tasks[k] = asyncio.create_task(
             v.run(force=data.get("force", False)),
@@ -120,13 +125,18 @@ async def _run(data: dict):
     for k, v in tasks.items():
         await v
         _r = services[k].get_object()
+        if _r is None:
+            raise RuntimeError(f"Run failed for {k}")
         match data.get("format"):
             case "short":
                 results[k] = _r.short()
             case "long":
                 results[k] = _r.long()
             case "json":
-                results[k] = asdict(_r)
+                if not is_dataclass(_r):
+                    raise RuntimeError(f"Cache for {k} is bad.")
+                else:
+                    results[k] = asdict(_r)
             case _:
                 _logger.error(f"Unknown format: {data.get('format')}")
     _logger.debug2(f"Returning results: {results}")

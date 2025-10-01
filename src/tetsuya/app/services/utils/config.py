@@ -6,6 +6,7 @@ import asyncio
 import tomllib
 from http import HTTPStatus
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import logistro
 import platformdirs
@@ -16,13 +17,16 @@ from fastapi.responses import JSONResponse
 from tetsuya._globals import app, cli, service_types
 from tetsuya.app.client import get_client
 
+if TYPE_CHECKING:
+    from typing import Any
+
 _logger = logistro.getLogger(__name__)
 
 config_file = (
     Path(platformdirs.user_config_dir("tetsuya", "pikulgroup")) / "config.toml"
 )
 
-config_data = {}
+config_data: dict[Any, Any] = {}
 
 
 def _load_config() -> bool:
@@ -78,7 +82,7 @@ async def _touch(data: dict):
     config_file.parent.mkdir(parents=True, exist_ok=True)
 
     if data.get("default"):
-        config_dict = {}
+        config_dict: dict[Any, Any] = {}
         for t in service_types:
             if hasattr(t, "default_config"):
                 d = config_dict.setdefault(t.__name__, {})
