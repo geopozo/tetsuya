@@ -85,7 +85,7 @@ class SearchGit(_protocol.Bannin):  # is Bannin
             expr += ["-name", str(name)]
             expr += ["-o"]
         # drop last -o, close group, then -prune -o
-        expr = [r"\(", *expr[:-1], r"\)", "-prune", "-o"] if expr else []
+        expr = [r"(", *expr[:-1], r")", "-prune", "-o"] if expr else []
 
         cmd = [
             "find",
@@ -96,7 +96,7 @@ class SearchGit(_protocol.Bannin):  # is Bannin
             "-name",
             ".git",
             "-printf",
-            "%h\n",  # print the parent dir of .git
+            r"%h\n",  # print the parent dir of .git
             "-prune",  # and don't descend into the .git dir itself
         ]
         _logger.info(" ".join(cmd))
@@ -106,11 +106,11 @@ class SearchGit(_protocol.Bannin):  # is Bannin
             capture_output=True,
         )
         retval, stdout, stderr = p.returncode, p.stdout, p.stderr
-
+        _logger.info("Git search ran find process.")
         _repos = sorted(
             {Path(p) for p in stdout.decode(errors="ignore").split("\n") if p},
         )
-
+        _logger.info(_repos)
         return SearchGitReport(retval=retval, stderr=stderr.decode(), repos=_repos)
 
 

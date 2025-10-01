@@ -57,7 +57,7 @@ def start():
     )
     if not is_server_alive(p := uds_path()):
         for _s in active_services:
-            _logger.info(f"Found: {_s.__class__.__name__}")
+            _logger.info(f"Found: {_s}")
         os.umask(0o077)
         _logger.info("Starting server.")
         uvicorn.run(app, uds=str(p))

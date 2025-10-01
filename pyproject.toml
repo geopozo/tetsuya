@@ -29,6 +29,7 @@ dependencies = [
     "fastapi>=0.118.0",
     "httpx>=0.28.1",
     "logistro>=1.1.0",
+    "orjson>=3.11.3",
     "platformdirs>=4.4.0",
     "tomli-w>=1.2.0",
     "typer>=0.19.2",
