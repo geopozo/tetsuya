@@ -31,6 +31,7 @@ dependencies = [
     "logistro>=1.1.0",
     "orjson>=3.11.3",
     "platformdirs>=4.4.0",
+    "pyright>=1.1.406",
     "tomli-w>=1.2.0",
     "typer>=0.19.2",
     "uvicorn>=0.37.0",
