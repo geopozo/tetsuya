@@ -10,12 +10,7 @@ import logistro
 
 _logger = logistro.getLogger(__name__)
 
-# I'm not entirely sure about the timer
-# And it doesn't actually cache and load
-# And there is no way to change it.
-
-
-class Output(Protocol):
+class Tsuho(Protocol):
     """The object a service stores or returns."""
 
     created_at: datetime
@@ -27,23 +22,23 @@ class Output(Protocol):
 class Bannin(Protocol):
     """The abstract idea of a service."""
 
-    report_type: type[Output]
+    report_type: type[Tsuho]
     name: str
     cachelife: timedelta
     version: int
-    cache: Output | None
+    cache: Tsuho | None
     _pending_task: asyncio.Task | None = None
 
     @classmethod
     def default_config(cls) -> dict: ...
-    def _execute(self) -> Output: ...
+    def _execute(self) -> Tsuho: ...
 
     def _is_cache_live(self):
         return self.cache is not None and (
             self.cache.created_at + self.cachelife > datetime.now(tz=UTC)
         )
 
-    def get_object(self) -> Output:
+    def get_object(self) -> Tsuho:
         """Get the actual latest result object."""
         if not self.cache:
             raise RuntimeError(f"Cache for {self.name} wont populate.")

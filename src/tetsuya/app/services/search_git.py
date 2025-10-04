@@ -45,7 +45,7 @@ class SearchGitReport:
 class SearchGit(_base.Bannin):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
-    report_type: type[_base.Output] = SearchGitReport
+    report_type: type[_base.Tsuho] = SearchGitReport
 
     @classmethod  # make mandatory through protocol
     def default_config(cls) -> dict:
