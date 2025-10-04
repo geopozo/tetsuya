@@ -9,7 +9,7 @@ import logistro
 
 from tetsuya._globals import service_types
 
-from . import _protocol
+from . import _base
 from .utils.config import config_data
 
 _logger = logistro.getLogger(__name__)
@@ -42,10 +42,10 @@ class SearchGitReport:
         return ", ".join(p.name for p in sorted(self.repos))
 
 
-class SearchGit(_protocol.Bannin):  # is Bannin
+class SearchGit(_base.Bannin):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
-    report_type: type[_protocol.Output] = SearchGitReport
+    report_type: type[_base.Output] = SearchGitReport
 
     @classmethod  # make mandatory through protocol
     def default_config(cls) -> dict:

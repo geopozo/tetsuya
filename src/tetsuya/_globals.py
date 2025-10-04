@@ -11,7 +11,7 @@ from fastapi import FastAPI
 from fastapi.responses import Response
 
 if TYPE_CHECKING:
-    from .app.services._protocol import Bannin
+    from .app.services._base import Bannin
 
 _logger = logistro.getLogger(__name__)
 
