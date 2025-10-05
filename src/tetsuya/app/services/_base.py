@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 
 import logistro
 
+from tetsuya.timer import reschedule
+
 from .utils.config import config_data
 
 if TYPE_CHECKING:
@@ -94,6 +96,7 @@ class Bannin(ABC, Generic[TSettei]):
             _logger.info("Not rerunning- cache is live.")
             return
         cache = await asyncio.to_thread(self._execute)
+        reschedule(self)
         if hasattr(cache, "tstamp") and cache:
             cache.tstamp()
         self.cache = cache
