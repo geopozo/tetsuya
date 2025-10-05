@@ -14,8 +14,9 @@ import tomli_w
 import typer
 from fastapi.responses import JSONResponse
 
-from tetsuya._globals import app, cli, service_types
+from tetsuya._globals import active_services, app, cli, service_types
 from tetsuya.app.client import get_client
+from tetsuya.timer import reconfig
 
 if TYPE_CHECKING:
     from typing import Any
@@ -107,6 +108,8 @@ def reload():
     r = client.post(
         "/config/reload",
     )
+    for _s in active_services.values():
+        reconfig(_s)
     # check return value
     if r.status_code == HTTPStatus.OK:
         print("OK")  # noqa: T201

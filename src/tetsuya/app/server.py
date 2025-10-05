@@ -12,6 +12,7 @@ import logistro
 import uvicorn
 
 from tetsuya._globals import active_services, app, cli, service_types
+from tetsuya.timer import reconfig
 
 from .client import get_client
 from .utils import uds_path
@@ -56,8 +57,9 @@ def start():
         {f.__name__: f() for f in service_types},
     )
     if not is_server_alive(p := uds_path()):
-        for _s in active_services:
-            _logger.info(f"Found: {_s}")
+        for _n, _s in active_services.items():
+            _logger.info(f"Found: {_n}")
+            reconfig(_s)
         os.umask(0o077)
         _logger.info("Starting server.")
         uvicorn.run(app, uds=str(p))

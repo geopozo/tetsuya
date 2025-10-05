@@ -17,7 +17,7 @@ timer_tasks: dict[str, TaskData]
 
 _logger = logistro.getLogger(__name__)
 
-def reconfig(self, service: Bannin):
+def reconfig(service: Bannin):
     cfg = service.get_config()
     if not cfg.autorefresh:
         deschedule(service)
