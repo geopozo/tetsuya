@@ -1,11 +1,4 @@
-- [ ] It doesn't run anything at boot, needs to execute everything once
-- [ ]
-
 Later todo
-
-  - [ ] Make config typed
-
-  - [ ] Encrypt and backup config? Encrypted backups of entire system?
   - [ ] Add checking if git dirty or not pushed
   - [ ] Add some log statistics
   - [ ] Add some firewall statistics
@@ -19,12 +12,15 @@ Later todo
   - [ ] Check itself
 
 
-# Get it up on system d for your user
+# Get it up on systemd
+
+```
 mkdir -p ~/.config/systemd/user
 
 systemctl --user daemon-reload
 systemctl --user enable --now "$(realpath tetsuya.service)"
 
-loginctl enable-linger "$USER" (allow it to start at boot)
+loginctl enable-linger "$USER" # (allow it to start at boot)
 
 journalctl --user -u tetsuya -f
+```
