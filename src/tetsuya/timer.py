@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, TypedDict
@@ -13,7 +15,7 @@ class TaskData(TypedDict):
     tstamp: datetime
     service: Bannin
 
-timer_tasks: dict[str, TaskData]
+timer_tasks: dict[str, TaskData] = {}
 
 _logger = logistro.getLogger(__name__)
 
@@ -43,6 +45,7 @@ def _clear_task(t: asyncio.Task):
 def _post_task(service: Bannin, t: int = 0):
     async def _delayed_task(service: Bannin, t: int):
         await asyncio.sleep(t)
+        _logger.info(f"Timer fired for {service.get_name()} @ {datetime.now()}")
         await service.run()
 
     _t = asyncio.create_task(_delayed_task(service, t))
@@ -56,6 +59,7 @@ def _post_task(service: Bannin, t: int = 0):
 
 
 def reschedule(service: Bannin, *, for_when: int | None = None):
+    _logger.info(f"Rescheduling {service.get_name()}")
     deschedule(service)
     _post_task(
         service,

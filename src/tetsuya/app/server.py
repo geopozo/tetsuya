@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
 import sys
 from http import HTTPStatus
@@ -53,19 +54,28 @@ def is_server_alive(uds_path: Path) -> bool:
 @cli.command(name="server")
 def start():
     """Start the server."""
-    active_services.update(
-        {f.__name__: f() for f in service_types},
-    )
-    if not is_server_alive(p := uds_path()):
-        for _n, _s in active_services.items():
-            _logger.info(f"Found: {_n}")
-            reconfig(_s)
-        os.umask(0o077)
-        _logger.info("Starting server.")
-        uvicorn.run(app, uds=str(p))
-    else:
-        print("Server already running.", file=sys.stderr)  # noqa: T201
-        sys.exit(1)
+    async def _start():
+        active_services.update(
+            {f.__name__: f() for f in service_types},
+        )
+        if not is_server_alive(p := uds_path()):
+            for _n, _s in active_services.items():
+                _logger.info(f"Found: {_n}")
+                reconfig(_s)
+            os.umask(0o077)
+            _logger.info("Starting server.")
+            server = uvicorn.Server(uvicorn.Config(
+                app,
+                uds=str(p),          # ✅ same as uvicorn.run(app, uds=str(p))
+                loop="asyncio",      # use the current asyncio loop
+                lifespan="on",
+                reload=False,
+                ))
+            await server.serve()
+        else:
+            print("Server already running.", file=sys.stderr)  # noqa: T201
+            sys.exit(1)
+    asyncio.run(_start())
 
 
 @app.get("/ping")

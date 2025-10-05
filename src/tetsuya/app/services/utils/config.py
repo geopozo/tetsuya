@@ -108,8 +108,6 @@ def reload():
     r = client.post(
         "/config/reload",
     )
-    for _s in active_services.values():
-        reconfig(_s)
     # check return value
     if r.status_code == HTTPStatus.OK:
         print("OK")  # noqa: T201
@@ -122,6 +120,9 @@ async def _reload():
     """Reload config file."""
     _logger.info("Reloading config file.")
     res = _load_config()
+    for _s in active_services.values():
+        _logger.info(f"Reloading config for {_s.get_name()}")
+        reconfig(_s)
     if not res:
         return JSONResponse(
             content={},
