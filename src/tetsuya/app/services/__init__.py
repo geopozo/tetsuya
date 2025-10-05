@@ -57,10 +57,11 @@ def run(
     all: bool = False,  # noqa: A002
     force: bool = False,
     format: Literal["short", "long", "json"] = "json",  # noqa: A002
+    timeout: int = 10,
     # accept a cache controller here
 ):
     """Run a or all services."""
-    client = get_client(timeout=10)
+    client = get_client(timeout=timeout)
     _logger.info("Sending run command.")
     r = client.post(
         "/service/run",
@@ -118,6 +119,7 @@ async def _run(data: dict):  # noqa: C901, PLR0912
     k: Any
     v: Any
     for k, v in services.items():
+        _logger.info(f"Creating {k!s} run task.")
         tasks[k] = asyncio.create_task(
             v.run(force=data.get("force", False)),
         )

@@ -82,9 +82,8 @@ async def _touch(data: dict):
     if data.get("default"):
         config_dict: dict[Any, Any] = {}
         for t in service_types:
-            if hasattr(t, "default_config"):
-                d = config_dict.setdefault(t.__name__, {})
-                d.update(t.get_config_type().default_config())
+            d = config_dict.setdefault(t.__name__, {})
+            d.update(t.get_config_type().default_config())
         if not config_file.exists() or data.get("force"):
             await asyncio.to_thread(config_file.write_text, tomli_w.dumps(config_dict))
         else:

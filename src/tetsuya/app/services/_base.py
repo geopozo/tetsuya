@@ -6,27 +6,28 @@ import asyncio
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 import logistro
 
 from .utils.config import config_data
 
 if TYPE_CHECKING:
-    from typing import Any, Generic, TypeVar
+    from typing import Any
 
-    TSettei = TypeVar("TSettei", bound=Settei)
 
 _logger = logistro.getLogger(__name__)
 
 @dataclass(slots=True)
 class Settei(ABC):
-    cachelife: timedelta = timedelta(0)
+    cachelife: int = 0 # number of seconds
     autorefresh: bool = False
 
     @classmethod
     def default_config(cls) -> dict[str, Any]:
         return asdict(cls())
+
+TSettei = TypeVar("TSettei", bound=Settei)
 
 class Tsuho(ABC):
     """The object a service stores or returns."""
@@ -55,7 +56,7 @@ class Tsuho(ABC):
             return False
         if not config or not hasattr(config, "cachelife"):
             return False
-        return self.created_at + config.cachelife > datetime.now(tz=UTC)
+        return self.created_at + timedelta(seconds=config.cachelife) > datetime.now(tz=UTC)
 
 class Bannin(ABC, Generic[TSettei]):
     """The abstract idea of a service."""
@@ -83,6 +84,7 @@ class Bannin(ABC, Generic[TSettei]):
 
     async def run(self, *, force=False):
         """Run the service in a cache-aware manner."""
+        _logger.info(f"Running {self.get_name()}")
         cache = self.get_report()
         if (
                 not force
@@ -91,7 +93,7 @@ class Bannin(ABC, Generic[TSettei]):
                 ):
             _logger.info("Not rerunning- cache is live.")
             return
-        self.cache = await asyncio.to_thread(self._execute)
+        cache = await asyncio.to_thread(self._execute)
         if hasattr(cache, "tstamp") and cache:
             cache.tstamp()
         self.cache = cache

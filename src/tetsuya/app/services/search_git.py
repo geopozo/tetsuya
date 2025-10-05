@@ -2,7 +2,7 @@
 
 import subprocess
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 import logistro
@@ -15,7 +15,7 @@ _logger = logistro.getLogger(__name__)
 
 @dataclass(slots=True)
 class Config(_base.Settei):
-    cachelife: timedelta = timedelta(hours=12)
+    cachelife: int = 12 * 60 * 60
     autorefresh: bool = True
     ignore_folders: list[str] = field(default_factory=lambda: [".cache"])
     ignore_paths: list[str] = field(default_factory=list)
@@ -91,12 +91,13 @@ class SearchGit(_base.Bannin[Config]):  # is Bannin
             capture_output=True,
         )
         retval, stdout, stderr = p.returncode, p.stdout, p.stderr
-        _logger.info("Git search ran find process.")
+        _logger.info("SearchGit ran command `find`.")
         _repos = sorted(
             {Path(p) for p in stdout.decode(errors="ignore").split("\n") if p},
         )
-
-        return Report(retval=retval, stderr=stderr.decode(), repos=_repos)
+        # we are not skipping things properly
+        rep = Report(retval=retval, stderr=stderr.decode(), repos=_repos)
+        return rep
 
 
 service_types.append(SearchGit)
