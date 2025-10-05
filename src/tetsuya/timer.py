@@ -25,7 +25,7 @@ def reconfig(service: Bannin):
         deschedule(service)
     else:
         if not (_td := timer_tasks.get(service.get_name())):
-            reschedule(service)
+            reschedule(service, for_when=0)
         else:
             if _td["cachelife"] != cfg.cachelife:
                 duedate = _td["tstamp"] + timedelta(seconds=cfg.cachelife)
