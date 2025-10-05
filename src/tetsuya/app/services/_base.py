@@ -3,70 +3,101 @@
 from __future__ import annotations
 
 import asyncio
+from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Protocol
+from typing import TYPE_CHECKING
 
 import logistro
 
+from .utils.config import config_data
+
+if TYPE_CHECKING:
+    from typing import Any, Generic, TypeVar
+
+    TSettei = TypeVar("TSettei", bound=Settei)
+
 _logger = logistro.getLogger(__name__)
 
-class Tsuho(Protocol):
-    """The object a service stores or returns."""
-
-    created_at: datetime
-
-    def long(self) -> str: ...
-    def short(self) -> str: ...
-
-
-class Bannin(Protocol):
-    """The abstract idea of a service."""
-
-    report_type: type[Tsuho]
-    name: str
-    cachelife: timedelta
-    version: int
-    cache: Tsuho | None
-    _pending_task: asyncio.Task | None = None
+@dataclass(slots=True)
+class Settei(ABC):
+    cachelife: timedelta = timedelta(0)
+    autorefresh: bool = False
 
     @classmethod
-    def default_config(cls) -> dict: ...
+    def default_config(cls) -> dict[str, Any]:
+        return asdict(cls())
+
+class Tsuho(ABC):
+    """The object a service stores or returns."""
+
+    @abstractmethod
+    def long(self) -> str: ...
+
+    @abstractmethod
+    def short(self) -> str: ...
+
+    created_at: datetime | None = None
+
+    def _is_stamped(self) -> bool:
+        return bool(hasattr(self, "created_at") and self.created_at) is not None
+
+    def since_when(self) -> timedelta | None:
+        if not self._is_stamped() or self.created_at is None: # redundant but typechecker dumb
+            return None
+        return datetime.now(tz=UTC) - self.created_at
+
+    def tstamp(self) -> None:
+        self.create_at = datetime.now(tz=UTC)
+
+    def is_live(self, config: Settei | None) -> bool:
+        if not self._is_stamped() or self.created_at is None:
+            return False
+        if not config or not hasattr(config, "cachelife"):
+            return False
+        return self.created_at + config.cachelife > datetime.now(tz=UTC)
+
+class Bannin(ABC, Generic[TSettei]):
+    """The abstract idea of a service."""
+
+    @classmethod
+    @abstractmethod
+    def get_name(cls) -> str:
+        """Get name of service."""
+
+    @classmethod
+    @abstractmethod
+    def get_config_type(cls) -> type[TSettei]:
+        """Get a config dataclass."""
+
+    cache: Tsuho | None
+
+    @abstractmethod
     def _execute(self) -> Tsuho: ...
 
-    def _is_cache_live(self):
-        return self.cache is not None and (
-            self.cache.created_at + self.cachelife > datetime.now(tz=UTC)
-        )
-
-    def get_object(self) -> Tsuho:
+    def get_report(self) -> Tsuho | None:
         """Get the actual latest result object."""
-        if not self.cache:
-            raise RuntimeError(f"Cache for {self.name} wont populate.")
+        if not hasattr(self, "cache"):
+            self.cache = None
         return self.cache
-
-    def _clear_task(self, p: asyncio.Task):
-        if p.cancelled():
-            return
-        if e := p.exception():
-            _logger.error(e)  # TODO(AJP): check about _logger and exceptions
-            # search exc_info in everything
-            # also, this won't restart
-
-    async def _run_in_a_while(self, time: int):
-        await asyncio.sleep(time)
-        await self.run()
 
     async def run(self, *, force=False):
         """Run the service in a cache-aware manner."""
-        if not force and self._is_cache_live():
+        cache = self.get_report()
+        if (
+                not force
+                and hasattr(cache, "is_live") and cache
+                and cache.is_live(config=self.get_config())
+                ):
             _logger.info("Not rerunning- cache is live.")
             return
-        if _p := self._pending_task:
-            _p.cancel()
-            await asyncio.sleep(0)  # let it cancel
         self.cache = await asyncio.to_thread(self._execute)
+        if hasattr(cache, "tstamp") and cache:
+            cache.tstamp()
+        self.cache = cache
+
         _logger.debug2(f"New cache: {self.cache}")
-        self._pending_task = asyncio.create_task(
-            self._run_in_a_while(int(self.cachelife.total_seconds())),
-        )
-        self._pending_task.add_done_callback(self._clear_task)
+
+    @classmethod
+    def get_config(cls) -> TSettei:
+        return cls.get_config_type()(**config_data.get(cls.get_name(), {}))

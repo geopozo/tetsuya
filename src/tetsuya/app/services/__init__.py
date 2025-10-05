@@ -124,7 +124,7 @@ async def _run(data: dict):  # noqa: C901, PLR0912
     results = {}
     for k, v in tasks.items():
         await v
-        _r = services[k].get_object()
+        _r = services[k].get_report()
         if _r is None:
             raise RuntimeError(f"Run failed for {k}")
         match data.get("format"):

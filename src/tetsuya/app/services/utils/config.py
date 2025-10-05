@@ -46,12 +46,10 @@ _load_config()
 config_cli = typer.Typer(help="Manage the config.")
 cli.add_typer(config_cli, name="config")
 
-
+# config validate?
 # should be able to load up *specific* log items and not replace others
 # should confirm on force
 
-
-# this should maybe have print? overwrite doesn't really make sense
 @config_cli.command()
 def touch(*, default: bool = False, force: bool = False, dump: bool = False):
     """Create config file if it doesn't exist."""
@@ -86,7 +84,7 @@ async def _touch(data: dict):
         for t in service_types:
             if hasattr(t, "default_config"):
                 d = config_dict.setdefault(t.__name__, {})
-                d.update(t.default_config())
+                d.update(t.get_config_type().default_config())
         if not config_file.exists() or data.get("force"):
             await asyncio.to_thread(config_file.write_text, tomli_w.dumps(config_dict))
         else:

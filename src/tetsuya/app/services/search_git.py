@@ -10,28 +10,23 @@ import logistro
 from tetsuya._globals import service_types
 
 from . import _base
-from .utils.config import config_data
 
 _logger = logistro.getLogger(__name__)
 
-# These will have to be versioned
-# And they will have to have migratory functions
-# They should also be logged (independently of other logs)
-# And their constructors should reasonably take an old version
-# config validation/default maybe dataclass or typed dict
-# Also should be able to consume javascript and return report
-
+@dataclass(slots=True)
+class Config(_base.Settei):
+    cachelife: timedelta = timedelta(hours=12)
+    autorefresh: bool = True
+    ignore_folders: list[str] = field(default_factory=lambda: [".cache"])
+    ignore_paths: list[str] = field(default_factory=list)
 
 @dataclass()
-class SearchGitReport:
+class Report(_base.Tsuho):
     """Report format for SearchGit."""
 
     retval: int
     stderr: str
     repos: list[Path]
-    created_at: datetime = field(
-        default_factory=lambda: datetime.now(tz=UTC),
-    )
 
     def long(self) -> str:
         """One full path per line."""
@@ -42,46 +37,36 @@ class SearchGitReport:
         return ", ".join(p.name for p in sorted(self.repos))
 
 
-class SearchGit(_base.Bannin):  # is Bannin
+class SearchGit(_base.Bannin[Config]):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
-    report_type: type[_base.Tsuho] = SearchGitReport
+    @classmethod
+    def get_name(cls):
+        return cls.__name__
 
-    @classmethod  # make mandatory through protocol
-    def default_config(cls) -> dict:
-        """Return dictionary with default config."""
-        return {
-            "ignore_folders": [".cache"],
-            "ignore_paths": [],
-        }
+    @classmethod
+    def get_config_type(cls):
+        return Config
 
     def __init__(self):
         """Construct a SearchGit service."""
-        self.name = self.__class__.__name__
-        self.cachelife = timedelta(hours=12)
-        self.version = 0
-        self.cache = None
-        # check if reloading (cache)
 
-    def _execute(self) -> SearchGitReport:
+    def _execute(self) -> Report:
         """Execute search of your home repository for git repos."""
         home = Path.home()
 
-        _c = config_data.get(self.name, {})
 
-        ignore_folders = _c.get("ignore_folders", [])
-        _logger.info(f"Ignoring folders: {ignore_folders}")
-
-        ignore_paths = _c.get("ignore_paths", [])
-        _logger.info(f"Ignoring paths: {ignore_paths}")
+        _cfg = self.get_config()
+        _logger.info(f"Ignoring folders: {_cfg.ignore_folders}")
+        _logger.info(f"Ignoring paths: {_cfg.ignore_paths}")
 
         # Build the prune expression:
         # ( -path <abs> -o -path <abs> -o -name <nm> -o ... )
         expr = []
-        for p in ignore_paths:
+        for p in _cfg.ignore_paths:
             expr += ["-path", str(p)]
             expr += ["-o"]
-        for name in ignore_folders:
+        for name in _cfg.ignore_folders:
             expr += ["-name", str(name)]
             expr += ["-o"]
         # drop last -o, close group, then -prune -o
@@ -111,7 +96,7 @@ class SearchGit(_base.Bannin):  # is Bannin
             {Path(p) for p in stdout.decode(errors="ignore").split("\n") if p},
         )
 
-        return SearchGitReport(retval=retval, stderr=stderr.decode(), repos=_repos)
+        return Report(retval=retval, stderr=stderr.decode(), repos=_repos)
 
 
 service_types.append(SearchGit)
