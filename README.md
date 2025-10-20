@@ -1,3 +1,12 @@
+- [ ] Add in dynamic modules
+- [ ] Review logs and do systemd logs
+- [ ] Add caching to logs
+- [ ] Add a cache status manager
+- [ ] document cache rules
+  - autorefresh will run cache)
+  - what does 0 do? never cache? forever cache. Never cache, right?
+- [ ] I think maybe a better command structure
+
 Later todo
   - [ ] Add checking if git dirty or not pushed
   - [ ] Add some log statistics
