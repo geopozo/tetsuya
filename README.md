@@ -1,26 +1,3 @@
-- [ ] Add in dynamic modules
-- [ ] Review logs and do systemd logs
-- [ ] Add caching to logs
-- [ ] Add a cache status manager
-- [ ] document cache rules
-  - autorefresh will run cache)
-  - what does 0 do? never cache? forever cache. Never cache, right?
-- [ ] I think maybe a better command structure
-
-Later todo
-  - [ ] Add checking if git dirty or not pushed
-  - [ ] Add some log statistics
-  - [ ] Add some firewall statistics
-  - [ ] Add updates
-  - [ ] Add changelog (linux)
-  - [ ] Add news, linux, hackernews?
-  - [ ] Add website status check
-  - [ ] Add google analytics check
-  - [ ] But also constant ingress and event push (tetsuya)
-  - [ ] Add something that checks on any request
-  - [ ] Check itself
-
-
 # Get it up on systemd
 
 ```
@@ -33,3 +10,26 @@ loginctl enable-linger "$USER" # (allow it to start at boot)
 
 journalctl --user -u tetsuya -f
 ```
+
+## Desired modules
+
+- [ ] Active sessions on linux
+- [ ] Updates available
+- [ ] Uptime
+- [ ] Any errors on systemd + --kernel
+- [ ] Changelog on kernel
+- [ ] Domains status (email and everything)
+- [ ] Websites ok
+- [ ] Google drive auditor, google accounts
+- [ ] Analytics summary + link
+- [ ] Personal directory status
+- [ ] Git status
+- [ ] Some finance information
+- [ ] Do scraping and notification of forums and such (subscribe, itll be an onslaught)
+- [ ] Github helper with auditor
+- [ ] Git checker
+- [ ] Firewall stats
+- [ ] process accounting?
+
+- [ ] Connect to other services and get their JSON?
+
