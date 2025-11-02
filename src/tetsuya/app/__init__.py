@@ -1,16 +1,8 @@
-"""app providers the server and its services, as well as script entry."""
+"""
+Provides the tetsuya server and client.
 
-import logistro
+Submodule server.py is most of both interfaces, containing most of the client. Even
+client.py is just helper functions.
+"""
 
-from tetsuya._globals import cli
-
-from . import server as server  # need this to be executed
 from . import services as services  # need this to be executed
-
-_logger = logistro.getLogger(__name__)
-
-
-def main():  # script entry point
-    """Start the cli service."""
-    _, remaining = logistro.parser.parse_known_args()
-    cli(args=remaining)
