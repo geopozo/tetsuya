@@ -15,6 +15,16 @@ journalctl --user -u tetsuya -f
 
 - [ ] Active sessions on linux
 - [ ] Updates available
+    ```
+    if which yay 1> /dev/null; then
+      (
+      set -e
+      yay -Qu
+      yay -Pw
+      checkupdates
+      )
+    fi
+    ```
 - [ ] Uptime
 - [ ] Any errors on systemd + --kernel
 - [ ] Changelog on kernel
