@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import cli_tree
 import logistro
 import orjson
 import typer
@@ -31,9 +32,16 @@ class ORJSONUtcResponse(Response):
         )
 
 
-cli = typer.Typer(help="tetsuya CLI")
+cli = typer.Typer(name="Tetsuya CLI")
+
+
+@cli.callback()
+def cb(help_tree=cli_tree.help_tree_option):
+    pass
+
+
 # Our server daemon
-app = FastAPI(title="Tetsuya", default_response_class=ORJSONUtcResponse)
+app = FastAPI(title="Tetsuya Daemon", default_response_class=ORJSONUtcResponse)
 
 # A list of possible services
 service_types: list[type[Bannin]] = []
