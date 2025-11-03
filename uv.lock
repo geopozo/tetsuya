@@ -53,33 +53,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cli-tree"
-source = { editable = "../../utilities/cli-tree.git" }
-dependencies = [
-    { name = "rich" },
-]
-
-[package.optional-dependencies]
-typer = [
-    { name = "typer" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "rich", specifier = ">=14.2.0" },
-    { name = "typer", marker = "extra == 'typer'", specifier = ">=0.20.0" },
-]
-provides-extras = ["typer"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "poethepoet", specifier = ">=0.30.0" },
-    { name = "pyright", specifier = ">=1.1.406" },
-    { name = "pytest", specifier = ">=8.3.4" },
-    { name = "pytest-xdist" },
-]
-
-[[package]]
 name = "click"
 version = "8.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -593,7 +566,6 @@ wheels = [
 name = "tetsuya"
 source = { editable = "." }
 dependencies = [
-    { name = "cli-tree", extra = ["typer"] },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "logistro" },
@@ -620,7 +592,6 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cli-tree", extras = ["typer"], editable = "../../utilities/cli-tree.git" },
     { name = "fastapi", specifier = ">=0.118.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "logistro", specifier = ">=1.1.0" },
