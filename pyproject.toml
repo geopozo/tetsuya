@@ -26,7 +26,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "cli-tree[typer]",
+  #    "cli-tree[typer]",
     "fastapi>=0.118.0",
     "httpx>=0.28.1",
     "logistro>=1.1.0",
@@ -39,7 +39,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-cli-tree = { path = "../../utilities/cli-tree.git", editable = true }
+#cli-tree = { path = "../../utilities/cli-tree.git", editable = true }
 
 [project.urls]
 
