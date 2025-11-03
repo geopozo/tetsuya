@@ -1,1 +1,1 @@
-"""Provides a server and client app for checking in on user-space services."""
+"""Tetsuya collects information turns it into REST/cli endpoints."""

@@ -2,18 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-import logistro
 import orjson
-import typer
-from fastapi import FastAPI
 from fastapi.responses import Response
-
-if TYPE_CHECKING:
-    from .app.services._base import Bannin
-
-_logger = logistro.getLogger(__name__)
 
 
 class ORJSONUtcResponse(Response):
@@ -29,14 +19,3 @@ class ORJSONUtcResponse(Response):
                 | orjson.OPT_SERIALIZE_NUMPY
             ),
         )
-
-
-cli = typer.Typer(help="tetsuya CLI")
-# Our server daemon
-app = FastAPI(title="Tetsuya", default_response_class=ORJSONUtcResponse)
-
-# A list of possible services
-service_types: list[type[Bannin]] = []
-
-# A list of running services, only activated by start
-active_services: dict[str, Bannin] = {}

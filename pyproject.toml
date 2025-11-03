@@ -26,6 +26,7 @@ maintainers = [
 ]
 
 dependencies = [
+  #    "cli-tree[typer]",
     "fastapi>=0.118.0",
     "httpx>=0.28.1",
     "logistro>=1.1.0",
@@ -37,10 +38,13 @@ dependencies = [
     "uvicorn>=0.37.0",
 ]
 
+[tool.uv.sources]
+#cli-tree = { path = "../../utilities/cli-tree.git", editable = true }
+
 [project.urls]
 
 [project.scripts]
-tetsuya = "tetsuya.app:main"
+tetsuya = "tetsuya.service_manager:start_client"
 
 [dependency-groups]
 dev = [
@@ -106,3 +110,7 @@ help = "Run test by test, slowly, quitting after first error"
 [tool.poe.tasks.filter-test]
 cmd = "pytest --log-level=1 -W error -vvvx -rA --capture=no --show-capture=no"
 help = "Run any/all tests one by one with basic settings: can include filename and -k filters"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
