@@ -2,23 +2,29 @@
 
 import subprocess
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 
 import logistro
-
-from tetsuya._globals import service_types
 
 from . import _base
 
 _logger = logistro.getLogger(__name__)
 
+
 @dataclass(slots=True)
 class Config(_base.Settei):
+    """Configuration object for a SearchGit."""
+
     cachelife: int = 12 * 60 * 60
     autorefresh: bool = True
-    ignore_folders: list[str] = field(default_factory=lambda: [".cache"])
+    ignore_folders: list[str] = field(
+        default_factory=lambda: [
+            ".cache",
+            "node_modules/",
+        ],
+    )
     ignore_paths: list[str] = field(default_factory=list)
+
 
 @dataclass()
 class Report(_base.Tsuho):
@@ -40,33 +46,20 @@ class Report(_base.Tsuho):
 class SearchGit(_base.Bannin[Config]):  # is Bannin
     """SearchGit is a class to find git repos below your home directory."""
 
-    @classmethod
-    def get_name(cls):
-        return cls.__name__
-
-    @classmethod
-    def get_config_type(cls):
-        return Config
-
-    def __init__(self):
-        """Construct a SearchGit service."""
-
-    def _execute(self) -> Report:
+    def _execute(self, cfg: Config) -> Report:
         """Execute search of your home repository for git repos."""
         home = Path.home()
 
-
-        _cfg = self.get_config()
-        _logger.info(f"Ignoring folders: {_cfg.ignore_folders}")
-        _logger.info(f"Ignoring paths: {_cfg.ignore_paths}")
+        _logger.info(f"Ignoring folders: {cfg.ignore_folders}")
+        _logger.info(f"Ignoring paths: {cfg.ignore_paths}")
 
         # Build the prune expression:
         # ( -path <abs> -o -path <abs> -o -name <nm> -o ... )
         expr = []
-        for p in _cfg.ignore_paths:
+        for p in cfg.ignore_paths:
             expr += ["-path", str(p)]
             expr += ["-o"]
-        for name in _cfg.ignore_folders:
+        for name in cfg.ignore_folders:
             expr += ["-name", str(name)]
             expr += ["-o"]
         # drop last -o, close group, then -prune -o
@@ -100,4 +93,8 @@ class SearchGit(_base.Bannin[Config]):  # is Bannin
         return rep
 
 
-service_types.append(SearchGit)
+han = _base.Han(
+    config=Config,
+    report=Report,
+    service=SearchGit,
+)

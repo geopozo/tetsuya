@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin
-ExecStart=/usr/bin/env uvx tetsuya@latest --logistro-level INFO server
+ExecStart=/usr/bin/env uvx tetsuya@latest --logistro-level INFO server start
 Restart=on-failure
 RestartSec=5
 StartLimitInterval=300

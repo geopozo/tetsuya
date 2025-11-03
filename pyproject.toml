@@ -44,7 +44,7 @@ cli-tree = { path = "../../utilities/cli-tree.git", editable = true }
 [project.urls]
 
 [project.scripts]
-tetsuya = "tetsuya.app:main"
+tetsuya = "tetsuya.service_manager:start_client"
 
 [dependency-groups]
 dev = [
