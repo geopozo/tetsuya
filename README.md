@@ -116,3 +116,12 @@ Then there would be a subpackage of course services.
 - [ ] Scrape forum posts
 - [ ] Firewall stats
 - [ ] process accounting?
+
+### Docs Needed
+
+- Examples in how its used
+- Browsing available services
+- Activating a new service
+- Controlling inspecting services
+- Writing your own service
+- Connecting remotely
