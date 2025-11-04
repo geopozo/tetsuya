@@ -47,6 +47,12 @@ journalctl --user -u tetsuya -f
 
 ## Roadmap
 
+I think service manager needs to be part of core, and needs to be split into
+an interface_api subpacket (cli+daemon) which imports the typers/routers from
+further submodules per section and combines them into one.
+
+Then there would be a subpackage of course services.
+
 - [ ] Some early modules:
   - [ ] Do a Basic 200 is it good thing
     - [ ] Check domains for email record
