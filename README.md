@@ -52,6 +52,18 @@ an interface_api subpacket (cli+daemon) which imports the typers/routers from
 further submodules per section and combines them into one.
 
 Then there would be a subpackage of course services.
+Note for doing updates:
+
+```bash
+if which yay 1> /dev/null; then
+  (
+  set -e
+  yay -Qu
+  yay -Pw
+  checkupdates
+  )
+fi
+```
 
 - [ ] Some early modules:
   - [ ] Do a Basic 200 is it good thing
@@ -60,18 +72,6 @@ Then there would be a subpackage of course services.
   - [ ] Active sessions on linux
   - [ ] Updates available
     - [ ] Changelog on kernel
-
-    ```bash
-    if which yay 1> /dev/null; then
-      (
-      set -e
-      yay -Qu
-      yay -Pw
-      checkupdates
-      )
-    fi
-    ```
-
 - [ ] Any errors on systemd + --kernel
 - [ ] Monarch Money from that guy? - MoneyFlown and redeploy
 - [ ] Improve naming and arguments, flags, etc.
@@ -111,7 +111,6 @@ Then there would be a subpackage of course services.
   - [ ] are we checking all domains that namecheap lists
   - [ ] does google list all
 - [ ] Analytics summary + link
-
 - [ ] Git status
 - [ ] Scrape forum posts
 - [ ] Firewall stats
