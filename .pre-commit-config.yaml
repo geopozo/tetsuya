@@ -3,6 +3,8 @@
 %YAML 1.2
 ---
 exclude: 'site/.*'
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -62,7 +64,7 @@ repos:
         language: python
         additional_dependencies: ["./gitlint-core[trusted-deps]"]
         entry: gitlint
-        args: [--staged, --msg-filename]
+        args: [--staged, -c, "general.ignore=B6,T3", --msg-filename]
         stages: [commit-msg]
   - repo: https://github.com/crate-ci/typos
     rev: v1
