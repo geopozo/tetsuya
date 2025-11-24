@@ -1,2 +1,5 @@
+v0.2.1
+- Fixed
 v0.2.0
+- YANKED for bad code
 - Refactor to improve internal/external API
