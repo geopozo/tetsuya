@@ -12,7 +12,7 @@ enabled = true
 
 [project]
 name = "tetsuya"
-description = "Plotly graph export library"
+description = """A user-local dashboard cache- JSON endpoints just for you."""
 license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.12"
@@ -26,7 +26,6 @@ maintainers = [
 ]
 
 dependencies = [
-  #    "cli-tree[typer]",
     "fastapi>=0.118.0",
     "httpx>=0.28.1",
     "logistro>=1.1.0",
